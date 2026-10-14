@@ -142,13 +142,69 @@ function openForm(id, main) {
     if (!row.name) { err.textContent = 'اسم المسوّق مطلوب'; return; }
 
     try {
+      // ====== هل النسبة اتغيرت؟ ======
+      const oldPct = id ? n(m.default_pct) : 0;
+      const pctChanged = id && Math.abs(oldPct - row.default_pct) > 0.0001;
+
+      // احفظ المسوّق أولاً
       if (id) {
         await api.data.update('marketers', id, row, 1);
       } else {
         await api.data.insert('marketers', row, 1);
       }
       toast('تم الحفظ');
-      dg.close();
+
+      // ====== تحديث نسبة العقود إذا النسبة اتغيرت ======
+      if (pctChanged) {
+        const linked = cache.contracts.filter(c => c.marketer_id === id);
+
+        if (linked.length > 0) {
+          const confirmed = confirm(
+            `النسبة الافتراضية للمسوّق «${row.name}» تغيّرت من ${oldPct}% إلى ${row.default_pct}%.\n\n` +
+            `يوجد ${linked.length} عقد مرتبط بهذا المسوّق.\n\n` +
+            `هل تريد تحديث نسبة العمولة في كل هذه العقود إلى ${row.default_pct}%؟\n\n` +
+            `• موافق (OK): تحديث كل العقود\n` +
+            `• إلغاء (Cancel): الاحتفاظ بالنسب الحالية للعقود`
+          );
+
+          if (confirmed) {
+            dg.close();
+            const prog = document.createElement('div');
+            prog.id = 'update-progress';
+            prog.style.cssText = `
+              position:fixed;bottom:20px;right:20px;background:#0b4547;color:#fff;
+              padding:14px 20px;border-radius:8px;z-index:9999;
+              box-shadow:0 8px 24px rgba(0,0,0,.35);font-size:14px;font-weight:600;
+            `;
+            prog.textContent = `جاري تحديث 0 / ${linked.length} عقد…`;
+            document.body.appendChild(prog);
+
+            let done = 0;
+            for (const c of linked) {
+              try {
+                await api.data.update('contracts', c.id, { pct: row.default_pct }, 1);
+              } catch (e) {
+                console.warn('فشل تحديث عقد:', c.id, e);
+              }
+              done++;
+              if (done % 5 === 0 || done === linked.length) {
+                prog.textContent = `جاري تحديث ${done} / ${linked.length} عقد…`;
+              }
+            }
+
+            prog.textContent = `✅ تم تحديث ${done} عقد بنجاح`;
+            setTimeout(() => prog.remove(), 2500);
+            toast(`تم تحديث ${done} عقد`);
+          } else {
+            dg.close();
+          }
+        } else {
+          dg.close();
+        }
+      } else {
+        dg.close();
+      }
+
       await refresh();
       draw(main);
     } catch (e) {

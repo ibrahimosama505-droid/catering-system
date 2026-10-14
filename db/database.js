@@ -13,7 +13,7 @@ const DEFAULT_LISTS = {
   method:  ["نقدي","تحويل بنكي","شيك","بطاقة"],
   cat:     ["مواد خام","عمالة","نقل وتوزيع","إيجار","مرافق","تراخيص ورسوم","تعبئة وتغليف","أخرى"],
   meal:    ["إفطار","غداء","عشاء","سناكس"],
-  agreement_status: ["نشطة","منتهية","ملغاة","معلقة"],
+  agreement_status: ["تمت الموافقة","منتهي","نشطة","منتهية","ملغاة","معلقة"],
   pct_options: ["0","5","10","12.5","15","20","25","30"]
 };
 
@@ -111,12 +111,15 @@ function migrate() {
     );
   `);
 
+  // Migration للأعمدة الجديدة في العقود
   addColumnIfMissing('contracts', 'ifaqa_end', 'TEXT');
   addColumnIfMissing('contracts', 'total_amount', 'REAL');
   addColumnIfMissing('contracts', 'agreement_status', 'TEXT');
   addColumnIfMissing('contracts', 'amend_reason', 'TEXT');
   addColumnIfMissing('contracts', 'amend_days', 'REAL');
   addColumnIfMissing('contracts', 'pilgrims_after', 'REAL');
+
+  // Migration للمسوّقين
   addColumnIfMissing('marketers', 'default_pct', 'REAL DEFAULT 0');
 }
 
@@ -128,10 +131,18 @@ function addColumnIfMissing(table, column, type) {
 }
 
 function seedLists() {
+  // نستخدم INSERT OR IGNORE لإضافة قيم جديدة بدون تكرار
   const ins = db.prepare('INSERT OR IGNORE INTO lists (list_key, value, sort_order) VALUES (?,?,?)');
   db.transaction(() => {
     for (const [k, arr] of Object.entries(DEFAULT_LISTS)) {
-      arr.forEach((v, i) => ins.run(k, v, i));
+      // ابحث عن أعلى sort_order موجود في القائمة
+      const max = db.prepare('SELECT COALESCE(MAX(sort_order),-1) m FROM lists WHERE list_key=?').get(k).m;
+      arr.forEach((v, i) => {
+        // حاول الإدخال، لو موجود بالفعل يتجاهل
+        try {
+          ins.run(k, v, max + 1 + i);
+        } catch (e) { /* ignore */ }
+      });
     }
   })();
 }
@@ -192,10 +203,8 @@ function changePass(id, oldP, newP) {
 function adminResetPassword(username, newPassword) {
   if (!username || !newPassword) throw new Error('بيانات ناقصة');
   if (newPassword.length < 6) throw new Error('كلمة المرور قصيرة (6 أحرف على الأقل)');
-
   const u = db.prepare('SELECT id FROM users WHERE username=?').get(username);
   if (!u) throw new Error('المستخدم غير موجود');
-
   db.prepare('UPDATE users SET password_hash=? WHERE id=?')
     .run(bcrypt.hashSync(newPassword, 10), u.id);
   return true;
@@ -242,10 +251,8 @@ function insert(table, row, uid) {
 
 function update(table, id, row, uid) {
   if (!TABLES.includes(table)) throw new Error('جدول غير معروف: ' + table);
-
   const cols = Object.keys(row);
   if (!cols.length) return true;
-
   const sql = `UPDATE ${table} SET ${cols.map(c=>`${c}=?`).join(',')} WHERE id=?`;
   db.prepare(sql).run(...cols.map(c => row[c]), id);
   log(uid, 'update', table, id, row);

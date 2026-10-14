@@ -1,7 +1,7 @@
 {
   "name": "catering-system",
   "productName": "نظام إدارة الإعاشة",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "نظام إدارة إعاشة الحج والعمرة - متعدد المستخدمين",
   "main": "main.js",
   "author": "Ibrahim Osama <ibrahimosama505@gmail.com>",

@@ -278,26 +278,52 @@ table {
   width: 100%;
   white-space: nowrap;
 }
-th, td {
-  padding: 8px 10px;
-  border-bottom: 1px solid var(--line);
-  text-align: start;
+
+/* ===== رأس الجدول SOLID - لون داكن زي الهيدر ===== */
+thead, table > tr:first-child {
+  background: #0b4547;
 }
+
 th {
-  color: var(--pri-dark);
+  color: #ffffff;
   font-weight: 700;
-  background: var(--hl);
+  background: #0b4547;          /* ← SOLID داكن */
   position: sticky;
   top: 0;
   font-size: 13px;
+  padding: 10px 10px;
+  border-bottom: 2px solid #072e30;   /* خط أغمق تحت الرأس */
+  letter-spacing: .2px;
+  z-index: 5;
 }
-tr:hover td { background: var(--hl); }
 
-/* عمود التاريخ الهجري */
-td.hijri {
-  font-size: 12px;
-  color: var(--mut);
-  font-style: italic;
+/* الصف الأول من الرأس في كل جدول */
+table > tr:first-child th,
+table > thead > tr > th {
+  background: #0b4547;
+  color: #ffffff;
+}
+
+td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: start;
+  background: var(--card);
+}
+
+tr:hover td { background: var(--hl); }
+tr:hover td[style*="background"] { background: var(--hl) !important; }
+
+/* الوضع الليلي - احتفظ بنفس اللون الداكن */
+@media (prefers-color-scheme: dark) {
+  th {
+    background: #072e30;
+    color: #ffffff;
+    border-bottom-color: #04191b;
+  }
+  table > tr:first-child th {
+    background: #072e30;
+  }
 }
 
 /* ============================================================

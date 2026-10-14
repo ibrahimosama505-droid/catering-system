@@ -31,5 +31,20 @@ contextBridge.exposeInMainWorld('api', {
     export: ()         => ipcRenderer.invoke('backup:export'),
     import: (json)     => ipcRenderer.invoke('backup:import', json),
     saveToFile: (name) => ipcRenderer.invoke('backup:saveToFile', name)
+  },
+  updater: {
+    check:             () => ipcRenderer.invoke('updater:check'),
+    download:          () => ipcRenderer.invoke('updater:download'),
+    install:           () => ipcRenderer.invoke('updater:install'),
+    getVersion:        () => ipcRenderer.invoke('updater:getVersion'),
+    openReleasesPage:  () => ipcRenderer.invoke('updater:openReleasesPage'),
+
+    // أحداث
+    onChecking:      (cb) => ipcRenderer.on('updater:checking', cb),
+    onAvailable:     (cb) => ipcRenderer.on('updater:available', (_, d) => cb(d)),
+    onNotAvailable:  (cb) => ipcRenderer.on('updater:not-available', (_, d) => cb(d)),
+    onError:         (cb) => ipcRenderer.on('updater:error', (_, d) => cb(d)),
+    onProgress:      (cb) => ipcRenderer.on('updater:progress', (_, d) => cb(d)),
+    onDownloaded:    (cb) => ipcRenderer.on('updater:downloaded', (_, d) => cb(d))
   }
 });

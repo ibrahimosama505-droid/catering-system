@@ -1,9 +1,11 @@
-const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, dialog, shell } = require('electron');
 const path = require('path');
 const db = require('./db/database');
+const { autoUpdater } = require('electron-updater');
 
 let mainWindow = null;
 
+// ============ قفل النسخة الواحدة ============
 const gotLock = app.requestSingleInstanceLock();
 if (!gotLock) {
   app.quit();
@@ -16,6 +18,58 @@ if (!gotLock) {
   });
 }
 
+// ============ إعداد Auto-Updater ============
+function setupAutoUpdater() {
+  autoUpdater.autoDownload = false;   // لا ننزّل تلقائياً - نطلب من المستخدم
+  autoUpdater.autoInstallOnAppQuit = true;
+  autoUpdater.logger = console;
+
+  autoUpdater.on('checking-for-update', () => {
+    sendToRenderer('updater:checking');
+    console.log('[Updater] جاري فحص التحديثات...');
+  });
+
+  autoUpdater.on('update-available', (info) => {
+    console.log('[Updater] يوجد تحديث:', info.version);
+    sendToRenderer('updater:available', {
+      version: info.version,
+      releaseDate: info.releaseDate,
+      releaseNotes: info.releaseNotes || ''
+    });
+  });
+
+  autoUpdater.on('update-not-available', (info) => {
+    console.log('[Updater] لا يوجد تحديث جديد');
+    sendToRenderer('updater:not-available', { version: info.version });
+  });
+
+  autoUpdater.on('error', (err) => {
+    console.error('[Updater] خطأ:', err.message);
+    sendToRenderer('updater:error', { message: err.message });
+  });
+
+  autoUpdater.on('download-progress', (progressObj) => {
+    sendToRenderer('updater:progress', {
+      percent: progressObj.percent,
+      transferred: progressObj.transferred,
+      total: progressObj.total,
+      bytesPerSecond: progressObj.bytesPerSecond
+    });
+  });
+
+  autoUpdater.on('update-downloaded', (info) => {
+    console.log('[Updater] تم تنزيل التحديث:', info.version);
+    sendToRenderer('updater:downloaded', { version: info.version });
+  });
+}
+
+function sendToRenderer(channel, data) {
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    mainWindow.webContents.send(channel, data);
+  }
+}
+
+// ============ إنشاء النافذة ============
 function createWindow() {
   Menu.setApplicationMenu(null);
   mainWindow = new BrowserWindow({
@@ -38,6 +92,7 @@ app.whenReady().then(() => {
   db.init();
   registerIpcHandlers();
   createWindow();
+  setupAutoUpdater();
 });
 
 app.on('window-all-closed', () => app.quit());
@@ -52,7 +107,7 @@ function wrap(fn) {
 }
 
 function registerIpcHandlers() {
-  // المصادقة
+  // ============ المصادقة ============
   ipcMain.handle('auth:hasUsers', () => {
     try { return db.hasUsers(); } catch (e) { return false; }
   });
@@ -64,8 +119,6 @@ function registerIpcHandlers() {
   ipcMain.handle('auth:updateUser', (_, id, data) => wrap(() => db.updateUser(id, data)));
   ipcMain.handle('auth:deleteUser', (_, id) => wrap(() => db.deleteUser(id)));
   ipcMain.handle('auth:changePass', (_, id, oldP, newP) => wrap(() => db.changePass(id, oldP, newP)));
-
-  // استعادة كلمة المرور
   ipcMain.handle('auth:listUsersForReset', () => {
     try { return db.listUsersForReset(); } catch (e) { return []; }
   });
@@ -73,7 +126,7 @@ function registerIpcHandlers() {
     wrap(() => db.adminResetPassword(username, newPassword))
   );
 
-  // CRUD
+  // ============ CRUD ============
   ipcMain.handle('data:all', (_, t, f) => {
     try { return db.getAll(t, f || {}); } catch (e) { console.error(e); return []; }
   });
@@ -84,7 +137,7 @@ function registerIpcHandlers() {
   ipcMain.handle('data:update', (_, t, id, r, u) => wrap(() => db.update(t, id, r, u)));
   ipcMain.handle('data:remove', (_, t, id, u) => wrap(() => db.remove(t, id, u)));
 
-  // القوائم
+  // ============ القوائم ============
   ipcMain.handle('lists:all', () => {
     try { return db.listsAll(); } catch (e) { console.error(e); return {}; }
   });
@@ -98,7 +151,7 @@ function registerIpcHandlers() {
     try { return db.listIsUsed(key, value); } catch (e) { return false; }
   });
 
-  // النسخ الاحتياطي
+  // ============ النسخ الاحتياطي ============
   ipcMain.handle('backup:export', () => {
     try {
       const tables = ['users','lists','kitchens','marketers','contracts','payments','expenses','meals','company_marketers'];
@@ -139,5 +192,42 @@ function registerIpcHandlers() {
       })();
       return { ok: true };
     } catch (e) { return { ok: false, error: e.message }; }
+  });
+
+  // ============ Auto-Updater ============
+  ipcMain.handle('updater:check', async () => {
+    try {
+      const result = await autoUpdater.checkForUpdates();
+      return { ok: true, data: result?.updateInfo || null };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  });
+
+  ipcMain.handle('updater:download', async () => {
+    try {
+      await autoUpdater.downloadUpdate();
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  });
+
+  ipcMain.handle('updater:install', () => {
+    try {
+      autoUpdater.quitAndInstall(false, true);
+      return { ok: true };
+    } catch (e) {
+      return { ok: false, error: e.message };
+    }
+  });
+
+  ipcMain.handle('updater:getVersion', () => {
+    return app.getVersion();
+  });
+
+  ipcMain.handle('updater:openReleasesPage', () => {
+    shell.openExternal('https://github.com/ibrahimosama505-droid/catering-system/releases');
+    return { ok: true };
   });
 }

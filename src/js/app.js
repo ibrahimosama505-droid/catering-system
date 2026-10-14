@@ -1,6 +1,7 @@
 import { initAuth } from './auth.js';
 import { maybeMigrate } from './migrate.js';
 import { esc, todayHijri } from './ui.js';
+import { initUpdater } from './updater.js';
 import { renderUsers } from './pages/users.js';
 import { renderDashboard } from './pages/dashboard.js';
 import { renderKitchens } from './pages/kitchens.js';
@@ -21,6 +22,7 @@ async function boot() {
 }
 
 async function onLoggedIn() {
+  // حماية: فك أي غلاف ممكن
   if (CURRENT_USER && CURRENT_USER.data && !CURRENT_USER.full_name) {
     CURRENT_USER = CURRENT_USER.data;
   }
@@ -32,9 +34,14 @@ async function onLoggedIn() {
   const role = CURRENT_USER?.role || 'user';
   document.getElementById('user-info').textContent = `${fullName} (${roleAr(role)})`;
 
+  // عرض التاريخ الهجري في الهيدر
   const hijriEl = document.getElementById('hijri-header');
   if (hijriEl) hijriEl.textContent = todayHijri('long');
 
+  // ===== تهيئة نظام التحديثات التلقائية =====
+  initUpdater();
+
+  // ترحيل البيانات القديمة (لو موجودة)
   try { await maybeMigrate(CURRENT_USER); }
   catch (e) { console.error('Migration error:', e); }
 
@@ -46,6 +53,7 @@ async function onLoggedIn() {
   };
 }
 
+/* ===== التبويبات + صلاحيات الوصول ===== */
 const TABS = [
   ['dash',      'الرئيسية',     ['admin', 'manager', 'user']],
   ['contracts', 'العقود',       ['admin', 'manager', 'user']],

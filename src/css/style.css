@@ -830,3 +830,90 @@ td select.inline-edit[data-type="pct"] {
 .forgot-link:active {
   transform: translateY(1px);
 }
+/* ============================================================
+   شريط التحديثات
+   ============================================================ */
+.update-banner {
+  position: fixed;
+  bottom: 0;
+  inset-inline: 0;
+  background: linear-gradient(135deg, #1e40af, #1e3a8a);
+  color: #fff;
+  padding: 14px 20px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.25);
+  z-index: 9998;
+  animation: slide-up .3s ease-out;
+}
+.update-banner.hidden { display: none; }
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.update-banner-inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 1200px;
+  margin: auto;
+  flex-wrap: wrap;
+}
+
+.update-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.update-text {
+  flex: 1;
+  min-width: 200px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.update-text b { font-size: 15px; }
+.update-text span { font-size: 12px; opacity: .85; }
+
+.update-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.update-actions .btn {
+  background: #fff;
+  color: var(--pri-dark);
+  font-weight: 600;
+}
+.update-actions .btn:hover {
+  background: #f0f0f0;
+}
+.update-actions .btn.g {
+  background: transparent;
+  color: #fff;
+  border: 1px solid #ffffff80;
+}
+.update-actions .btn.g:hover {
+  background: rgba(255,255,255,.1);
+}
+
+.update-progress {
+  flex: 1;
+  min-width: 200px;
+  height: 8px;
+  background: rgba(255,255,255,.2);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.update-progress-bar {
+  height: 100%;
+  background: #fff;
+  border-radius: 4px;
+  transition: width .3s ease;
+}
+
+/* شريط التنزيل يأخذ الصف كامل */
+.update-banner:has(.update-progress) .update-banner-inner {
+  flex-wrap: nowrap;
+}

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Content-Security-Policy"
-        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';">
+        content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://github.com https://api.github.com;">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>نظام إدارة الإعاشة</title>
   <link rel="stylesheet" href="css/style.css">
@@ -26,11 +26,8 @@
   <dialog id="dg"><form id="fm" method="dialog"></form></dialog>
   <div id="toast"></div>
 
-  <!-- مكتبات خارجية -->
   <script src="js/lib/chart.min.js"></script>
   <script src="js/lib/xlsx.min.js"></script>
-
-  <!-- التطبيق -->
   <script type="module" src="js/app.js"></script>
 </body>
 </html>

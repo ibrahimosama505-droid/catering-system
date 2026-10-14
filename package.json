@@ -1,0 +1,52 @@
+{
+  "name": "catering-system",
+  "productName": "نظام إدارة الإعاشة",
+  "version": "2.0.0",
+  "description": "نظام إدارة إعاشة الحج والعمرة - متعدد المستخدمين",
+  "main": "main.js",
+  "author": "Catering System",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win",
+    "dist-portable": "electron-builder --win portable",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "dependencies": {
+    "bcryptjs": "2.4.3",
+    "better-sqlite3": "11.10.0",
+    "electron-updater": "^6.3.9"
+  },
+  "devDependencies": {
+    "electron": "33.4.11",
+    "electron-builder": "^25.1.8"
+  },
+  "build": {
+    "appId": "com.catering.system",
+    "productName": "نظام إدارة الإعاشة",
+    "files": [
+      "main.js",
+      "preload.js",
+      "db/**/*",
+      "src/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false,
+      "artifactName": "${productName}-Setup-${version}.${ext}"
+    },
+    "directories": {
+      "output": "release",
+      "buildResources": "build"
+    }
+  }
+}

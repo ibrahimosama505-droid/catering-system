@@ -1,0 +1,832 @@
+/* ============================================================
+   1) المتغيرات والألوان — أزرق ملكي
+   ============================================================ */
+:root {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --ink: #1e293b;
+  --mut: #64748b;
+  --pri: #1e40af;
+  --pri-light: #3b82f6;
+  --pri-dark: #1e3a8a;
+  --onp: #ffffff;
+  --line: #e2e8f0;
+  --ok: #059669;
+  --warn: #d97706;
+  --bad: #dc2626;
+  --hl: #eff6ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --ink: #e2e8f0;
+    --mut: #94a3b8;
+    --pri: #60a5fa;
+    --pri-light: #93c5fd;
+    --pri-dark: #3b82f6;
+    --onp: #0f172a;
+    --line: #334155;
+    --ok: #34d399;
+    --warn: #fbbf24;
+    --bad: #f87171;
+    --hl: #1e3a8a40;
+  }
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font: 14px/1.6 "Segoe UI", Tahoma, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   2) الشاشات
+   ============================================================ */
+.screen { min-height: 100vh; }
+.hidden { display: none !important; }
+
+/* ============================================================
+   3) الهيدر — أزرق ملكي متدرج
+   ============================================================ */
+header {
+  background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
+  color: #fff;
+  padding: 12px 18px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 8px rgba(30, 64, 175, .2);
+}
+header h1 {
+  font-size: 17px;
+  margin: 0;
+  margin-inline-end: auto;
+  font-weight: 700;
+  letter-spacing: -.2px;
+}
+header .btn {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.3);
+}
+header .btn:hover { background: rgba(255,255,255,.2); }
+
+/* ============================================================
+   4) شريحة المستخدم
+   ============================================================ */
+.user-chip {
+  background: rgba(255,255,255,.15);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  margin-inline-end: 8px;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.2);
+}
+.hijri-chip {
+  background: rgba(255,255,255,.1);
+  color: #fff;
+  font-size: 12px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  margin-inline-end: 8px;
+}
+
+/* ============================================================
+   5) شريط التنقل
+   ============================================================ */
+nav {
+  display: flex;
+  gap: 2px;
+  overflow-x: auto;
+  background: var(--card);
+  border-bottom: 1px solid var(--line);
+  padding: 0 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+}
+nav button {
+  border: 0;
+  background: none;
+  color: var(--mut);
+  padding: 12px 15px;
+  font: inherit;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap;
+  transition: color .15s, border-color .15s;
+}
+nav button:hover { color: var(--pri); }
+nav button.on {
+  color: var(--pri);
+  border-color: var(--pri);
+  font-weight: 700;
+}
+
+/* ============================================================
+   6) المحتوى
+   ============================================================ */
+main {
+  padding: 16px;
+  max-width: 1500px;
+  margin: auto;
+  overflow-x: hidden;
+}
+
+/* ============================================================
+   7) الأزرار
+   ============================================================ */
+button, input, select { font: inherit; color: inherit; }
+
+.btn {
+  background: var(--pri);
+  color: var(--onp);
+  border: 0;
+  border-radius: 6px;
+  padding: 8px 15px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: opacity .15s, transform .12s, box-shadow .15s, background .15s;
+}
+.btn:hover:not(:disabled) {
+  background: var(--pri-dark);
+  box-shadow: 0 4px 12px rgba(30,64,175,.25);
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn.g {
+  background: var(--card);
+  color: var(--pri);
+  border: 1.5px solid var(--pri);
+}
+.btn.g:hover {
+  background: var(--hl);
+  box-shadow: 0 4px 12px rgba(30,64,175,.15);
+}
+
+.btn:focus-visible, nav button:focus-visible,
+input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--pri);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   8) الشريط العلوي للصفحة
+   ============================================================ */
+.bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.bar h2 {
+  margin: 0;
+  margin-inline-end: auto;
+  font-size: 18px;
+  color: var(--pri-dark);
+}
+
+/* ============================================================
+   9) الحقول
+   ============================================================ */
+input, select {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 10px;
+  width: 100%;
+  transition: border-color .15s, box-shadow .15s;
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--pri);
+  box-shadow: 0 0 0 3px rgba(30,64,175,.12);
+}
+.bar input { width: auto; }
+table input, table select { padding: 4px 8px; font-size: 13px; }
+
+/* ============================================================
+   10) بطاقات المؤشرات
+   ============================================================ */
+.kp {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.kp div {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  transition: transform .15s, box-shadow .15s;
+}
+.kp div:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+.kp small { color: var(--mut); display: block; font-size: 12px; margin-bottom: 2px; }
+.kp b { font-size: 20px; color: var(--pri-dark); }
+.kp .neg b { color: var(--bad); }
+
+/* ============================================================
+   11) الشبكة
+   ============================================================ */
+.g2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 16px;
+}
+
+/* ============================================================
+   12) الصناديق
+   ============================================================ */
+.box {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 14px;
+  overflow: auto;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.04);
+  max-height: 75vh; /* ارتفاع أقصى - يخلي الصفحة ما تتمددش */
+}
+
+.box h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  color: var(--pri-dark);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ============================================================
+   13) الجداول
+   ============================================================ */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  white-space: nowrap;
+}
+th, td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+  text-align: start;
+}
+th {
+  color: var(--pri-dark);
+  font-weight: 700;
+  background: var(--hl);
+  position: sticky;
+  top: 0;
+  font-size: 13px;
+}
+tr:hover td { background: var(--hl); }
+
+/* عمود التاريخ الهجري */
+td.hijri {
+  font-size: 12px;
+  color: var(--mut);
+  font-style: italic;
+}
+
+/* ============================================================
+   14) الشارات
+   ============================================================ */
+.b {
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  border: 1px solid currentColor;
+  font-weight: 600;
+}
+.s1 { color: var(--ok); background: rgba(5,150,105,.08); }
+.s2 { color: var(--warn); background: rgba(217,119,6,.08); }
+.s3 { color: var(--bad); background: rgba(220,38,38,.08); }
+
+/* ============================================================
+   15) أدوار المستخدمين
+   ============================================================ */
+.role-admin { color: #dc2626; }
+.role-manager { color: #d97706; }
+.role-user { color: #1e40af; }
+
+/* ============================================================
+   16) الأزرار الأيقونية
+   ============================================================ */
+.ic {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  color: var(--pri);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 13px;
+  transition: background .15s;
+}
+.ic:hover { background: var(--hl); }
+.ic.d { color: var(--bad); }
+.ic.d:hover { background: rgba(220,38,38,.08); }
+
+/* ============================================================
+   17) النوافذ المنبثقة
+   ============================================================ */
+dialog {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--ink);
+  width: min(680px, 94vw);
+  padding: 22px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.25);
+}
+dialog::backdrop {
+  background: rgba(15,23,42,.6);
+  backdrop-filter: blur(2px);
+}
+
+form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+form label {
+  font-size: 13px;
+  color: var(--mut);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-weight: 500;
+}
+form .f {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.err {
+  grid-column: 1 / -1;
+  color: var(--bad);
+  min-height: 18px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* حقل التاريخ الهجري (readonly) */
+input.hijri-readonly {
+  background: var(--hl);
+  color: var(--pri-dark);
+  cursor: not-allowed;
+  font-weight: 600;
+}
+
+/* ============================================================
+   18) الحالة الفارغة
+   ============================================================ */
+.empty {
+  color: var(--mut);
+  padding: 40px 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+/* ============================================================
+   19) التنبيهات
+   ============================================================ */
+#toast {
+  position: fixed;
+  bottom: 20px;
+  inset-inline-start: 20px;
+  background: var(--pri);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: none;
+  z-index: 9999;
+  box-shadow: 0 8px 24px rgba(30,64,175,.35);
+  animation: toast-in .3s ease-out;
+  font-weight: 500;
+}
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   20) شاشة تسجيل الدخول — أزرق ملكي
+   ============================================================ */
+#screen-auth {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(59,130,246,.4) 0%, transparent 50%),
+    radial-gradient(circle at 85% 80%, rgba(30,58,138,.5) 0%, transparent 50%),
+    linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+  position: relative;
+  overflow: hidden;
+}
+#screen-auth::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(circle, rgba(255,255,255,.08) 1px, transparent 1px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
+.auth-card {
+  background: var(--card);
+  color: var(--ink);
+  padding: 40px 36px 36px;
+  border-radius: 20px;
+  width: min(440px, 100%);
+  box-shadow: 0 30px 80px rgba(0,0,0,.4), 0 2px 0 rgba(255,255,255,.06) inset;
+  position: relative;
+  z-index: 1;
+  animation: auth-fade-in .4s ease-out;
+}
+@keyframes auth-fade-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.auth-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 20px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e40af, #1e3a8a);
+  color: #fff;
+  box-shadow: 0 12px 28px rgba(30,64,175,.4);
+}
+
+.auth-card h2 {
+  margin: 0 0 6px;
+  text-align: center;
+  font-size: 22px;
+  color: var(--pri-dark);
+  font-weight: 700;
+}
+.auth-card p.muted {
+  text-align: center;
+  color: var(--mut);
+  margin: 0 0 8px;
+  font-size: 13px;
+}
+.auth-card .hijri-line {
+  text-align: center;
+  color: var(--pri);
+  font-size: 12px;
+  margin: 0 0 22px;
+  font-weight: 600;
+}
+.auth-card form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label {
+  font-size: 13px;
+  color: var(--mut);
+  font-weight: 600;
+  padding-inline-start: 2px;
+}
+.field input {
+  padding: 12px 15px;
+  font-size: 15px;
+  border: 1.5px solid var(--line);
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--ink);
+  transition: border-color .18s, box-shadow .18s, background .18s;
+  width: 100%;
+}
+.field input::placeholder { color: var(--mut); opacity: .55; }
+.field input:hover { border-color: var(--pri-light); }
+.field input:focus {
+  outline: none;
+  border-color: var(--pri);
+  background: var(--card);
+  box-shadow: 0 0 0 4px rgba(30,64,175,.15);
+}
+
+.auth-card .err {
+  grid-column: 1 / -1;
+  min-height: 18px;
+  color: var(--bad);
+  font-size: 13px;
+  text-align: center;
+}
+.auth-submit {
+  margin-top: 6px;
+  padding: 13px 18px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 10px;
+  letter-spacing: .3px;
+  transition: transform .12s, box-shadow .18s, opacity .18s;
+  box-shadow: 0 6px 16px rgba(30,64,175,.3);
+  background: linear-gradient(135deg, #1e40af, #2563eb);
+}
+.auth-submit:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(30,64,175,.4);
+}
+.auth-submit:active:not(:disabled) { transform: translateY(0); }
+.auth-submit:disabled { opacity: .6; cursor: wait; }
+
+/* ============================================================
+   21) الرسوم البيانية — ارتفاع ثابت
+   ============================================================ */
+.chart-wrap {
+  position: relative;
+  height: 260px;
+  width: 100%;
+  overflow: hidden;
+}
+.chart-wrap canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-height: 260px !important;
+  max-width: 100% !important;
+}
+
+/* ============================================================
+   22) الإعدادات - قائمة جانبية
+   ============================================================ */
+#list-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+#list-selector .btn {
+  justify-content: space-between;
+  display: flex;
+  align-items: center;
+  text-align: start;
+  padding: 10px 14px;
+}
+
+/* ============================================================
+   23) استيراد الملفات
+   ============================================================ */
+input[type="file"] {
+  padding: 12px;
+  border: 2px dashed var(--line);
+  border-radius: 10px;
+  background: var(--card);
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  width: 100%;
+}
+input[type="file"]:hover {
+  border-color: var(--pri);
+  background: var(--hl);
+}
+input[type="file"]::file-selector-button {
+  background: var(--pri);
+  color: #fff;
+  border: 0;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 500;
+  margin-inline-end: 10px;
+  transition: background .15s;
+}
+input[type="file"]::file-selector-button:hover {
+  background: var(--pri-dark);
+}
+
+/* معاينة الاستيراد */
+.import-preview {
+  max-height: 340px;
+  overflow: auto;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 12px;
+  background: var(--bg);
+}
+.import-preview-header {
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: var(--pri-dark);
+  font-weight: 600;
+}
+.import-preview table {
+  font-size: 12px;
+  background: var(--card);
+}
+.import-preview th {
+  background: var(--hl);
+  padding: 6px 10px;
+  font-size: 12px;
+}
+.import-preview td {
+  padding: 5px 10px;
+}
+.import-errors {
+  margin-top: 10px;
+  padding: 8px 12px;
+  background: rgba(220,38,38,.08);
+  border: 1px solid rgba(220,38,38,.2);
+  border-radius: 8px;
+  color: var(--bad);
+  font-size: 12px;
+}
+.import-info {
+  color: var(--mut);
+  font-size: 13px;
+  margin: 0 0 10px;
+  line-height: 1.7;
+}
+.import-info b { color: var(--pri-dark); }
+
+/* ============================================================
+   24) الاستجابة
+   ============================================================ */
+@media (max-width: 900px) {
+  .g2 { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 560px) {
+  form { grid-template-columns: 1fr; }
+  .g2 { grid-template-columns: 1fr; }
+  .bar h2 { font-size: 16px; }
+  header h1 { font-size: 15px; }
+  header { padding: 10px 12px; }
+}
+
+@media (max-width: 480px) {
+  .auth-card { padding: 30px 24px 26px; border-radius: 16px; }
+  .auth-card h2 { font-size: 19px; }
+  .auth-logo { width: 66px; height: 66px; margin-bottom: 16px; }
+}
+
+/* ============================================================
+   25) الوضع الليلي
+   ============================================================ */
+@media (prefers-color-scheme: dark) {
+  header { background: linear-gradient(135deg, #1e3a8a 0%, #172554 100%); }
+  .field input { background: #0f172a; }
+  .auth-card { box-shadow: 0 30px 80px rgba(0,0,0,.7); }
+  #toast { background: #3b82f6; color: #fff; }
+  .kp b { color: var(--pri-light); }
+  .box h3 { color: var(--pri-light); }
+  .bar h2 { color: var(--pri-light); }
+  th { color: var(--pri-light); }
+  input[type="file"] { background: #0f172a; }
+  .import-preview { background: #0f172a; }
+}
+
+/* ============================================================
+   26) الطباعة
+   ============================================================ */
+@media print {
+  header, nav, .bar, #toast, dialog { display: none !important; }
+  main { padding: 0; max-width: 100%; }
+  .box { border: 0; page-break-inside: avoid; box-shadow: none; }
+  th { background: #eee !important; color: #000 !important; }
+  body { background: #fff; color: #000; }
+}
+/* ===== التعديل المباشر في الجدول ===== */
+.inline-edit {
+  background: transparent;
+  border: 1px dashed var(--line);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+  color: var(--ink);
+  font-weight: 500;
+  width: 100%;
+}
+.inline-edit:hover {
+  border-color: var(--pri);
+  background: var(--hl);
+}
+.inline-edit:focus {
+  outline: none;
+  border: 2px solid var(--pri);
+  background: var(--card);
+  box-shadow: 0 0 0 3px rgba(30,64,175,.15);
+}
+
+/* عمود المسوّق في الجدول */
+td select.inline-edit[data-type="marketer"] {
+  min-width: 130px;
+}
+td select.inline-edit[data-type="pct"] {
+  min-width: 70px;
+}
+
+/* ============================================================
+   السكرول الأنيق للجداول
+   ============================================================ */
+
+/* الجداول داخل الصناديق الكبيرة */
+.box {
+  overflow: auto;
+  max-height: 75vh;
+}
+
+/* شريط السكرول الأفقي والعمودي */
+.box::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.box::-webkit-scrollbar-track {
+  background: var(--hl);
+  border-radius: 10px;
+}
+
+.box::-webkit-scrollbar-thumb {
+  background: var(--pri);
+  border-radius: 10px;
+  border: 2px solid var(--hl);
+}
+
+.box::-webkit-scrollbar-thumb:hover {
+  background: var(--pri-dark);
+}
+
+.box::-webkit-scrollbar-corner {
+  background: var(--hl);
+}
+
+/* الجداول الكبيرة */
+.box table {
+  min-width: max-content;
+}
+
+/* رأس الجدول يبقى ثابت */
+.box th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--hl);
+}
+
+/* العمود الأول يبقى ثابت (اختياري) */
+.box table td:first-child,
+.box table th:first-child {
+  position: sticky;
+  inset-inline-start: 0;
+  background: var(--card);
+  z-index: 5;
+}
+
+.box table th:first-child {
+  z-index: 15;
+  background: var(--hl);
+}
+/* ============================================================
+   زر "نسيت كلمة المرور"
+   ============================================================ */
+.forgot-link {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 10px;
+  background: none;
+  border: 1px dashed var(--line);
+  border-radius: 8px;
+  color: var(--pri);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .15s, border-color .15s;
+  font-family: inherit;
+}
+.forgot-link:hover {
+  background: var(--hl);
+  border-color: var(--pri);
+  border-style: solid;
+}
+.forgot-link:active {
+  transform: translateY(1px);
+}
